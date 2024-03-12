@@ -39,6 +39,14 @@ def delete_restaurant(id):
         return jsonify({"error": "Restaurant not found"}), 404
 
 
+@app.route('/pizzas', methods=['GET'])
+def get_pizzas():
+    pizzas = db.session.query(Pizza).all()
+    return jsonify([pizza.to_dict() for pizza in pizzas]), 200
+
+
+
+
 @app.route('/')
 def index():
     return '<h1>Code challenge</h1>'
