@@ -44,6 +44,37 @@ def get_pizzas():
     pizzas = db.session.query(Pizza).all()
     return jsonify([pizza.to_dict() for pizza in pizzas]), 200
 
+@app.route('/restaurant_pizzas', methods=['POST'])
+def create_restaurant_pizza():
+    data = request.json
+    price = data.get('price')
+    pizza_id = data.get('pizza_id')
+    restaurant_id = data.get('restaurant_id')
+
+    if not all([price, pizza_id, restaurant_id]):
+        return jsonify({"errors": ["validation errors"]}), 400
+
+    if not (1 <= price <= 30):
+        return jsonify({"errors": ["validation errors"]}), 400
+
+    pizza = db.session.query(Pizza).get(pizza_id)
+    restaurant = db.session.query(Restaurant).get(restaurant_id)
+
+    if not (pizza and restaurant):
+        return jsonify({"errors": ["Pizza or Restaurant not found"]}), 404
+
+    try:
+        new_restaurant_pizza = RestaurantPizza(
+            price=price,
+            pizza_id=pizza_id,
+            restaurant_id=restaurant_id
+        )
+        db.session.add(new_restaurant_pizza)
+        db.session.commit()
+
+        return jsonify(new_restaurant_pizza.to_dict()), 201
+    except ValueError as e:
+        return jsonify({"errors": [str(e)]}), 400
 
 
 
