@@ -28,6 +28,17 @@ def get_restaurant_by_id(id):
         return jsonify({"error": "Restaurant not found"}), 404
 
 
+@app.route('/restaurants/<int:id>', methods=['DELETE'])
+def delete_restaurant(id):
+    restaurant = db.session.query(Restaurant).get(id)
+    if restaurant:
+        db.session.delete(restaurant)
+        db.session.commit()
+        return '', 204
+    else:
+        return jsonify({"error": "Restaurant not found"}), 404
+
+
 @app.route('/')
 def index():
     return '<h1>Code challenge</h1>'
