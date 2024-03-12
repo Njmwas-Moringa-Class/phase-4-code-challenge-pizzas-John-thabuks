@@ -19,6 +19,14 @@ def get_restaurants():
     return jsonify([restaurant.to_dict() for restaurant in restaurants]), 200
 
 
+@app.route('/restaurants/<int:id>', methods=['GET'])
+def get_restaurant_by_id(id):
+    restaurant = db.session.query(Restaurant).get(id)
+    if restaurant:
+        return jsonify(restaurant.to_dict(include_pizzas=True)), 200
+    else:
+        return jsonify({"error": "Restaurant not found"}), 404
+
 
 @app.route('/')
 def index():
