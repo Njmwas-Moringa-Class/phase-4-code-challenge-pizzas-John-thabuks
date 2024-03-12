@@ -11,6 +11,15 @@ app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
 db.init_app(app)
 migrate = Migrate(app, db)
 
+
+# GET /restaurants
+@app.route('/restaurants', methods=['GET'])
+def get_restaurants():
+    restaurants = db.session.query(Restaurant).all()
+    return jsonify([restaurant.to_dict() for restaurant in restaurants]), 200
+
+
+
 @app.route('/')
 def index():
     return '<h1>Code challenge</h1>'
